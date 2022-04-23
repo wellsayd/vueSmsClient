@@ -1,25 +1,32 @@
 <template>
-  <div id="app">
-    <VuePhoneNumberInput
-      v-model="phoneNumber"
-      :only-countries="['US']"
-      @update="payload = $event"
-      @input="update()"
-    />
+  <v-app>
+    <div class="mx-4">
+      <v-alert dismissible type="error"
+        >Please input valid phone number and message.</v-alert
+      >
 
-    <button v-on:click="sendMessage">SEND MESSAGE</button>
-    <textarea />
-  </div>
+      <vue-tel-input-vuetify
+        v-model="phone"
+        :onlyCountries="['US']"
+      ></vue-tel-input-vuetify>
+
+      <v-text-field
+        v-model="message1"
+        label="Enter text message here"
+        clearable
+        class="shrink"
+      ></v-text-field>
+      <v-btn elevation="2">Send Message</v-btn>
+    </div>
+  </v-app>
 </template>
 
 <script>
-import VuePhoneNumberInput from "vue-phone-number-input";
-import "vue-phone-number-input/dist/vue-phone-number-input.css";
 import api from "@/utils/api.js";
 
 export default {
   name: "App",
-  components: { VuePhoneNumberInput },
+
   data() {
     return {
       phoneNumber: null,
@@ -49,4 +56,9 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+input.heighttext {
+  padding: 20px 10px;
+  line-height: 28px;
+}
+</style>

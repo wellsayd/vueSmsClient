@@ -1,22 +1,24 @@
 <template>
   <v-app>
     <div class="mx-4">
-      <v-alert dismissible type="error"
-        >Please input valid phone number and message.</v-alert
+      <v-alert dismissible type="error" v-model="showErrorInput">
+        Please input valid phone number and message.</v-alert
       >
 
       <vue-tel-input-vuetify
-        v-model="phone"
+        defaultCountry="US"
+        v-model="phoneNumber"
         :onlyCountries="['US']"
+        @input="phoneInput"
       ></vue-tel-input-vuetify>
 
       <v-text-field
-        v-model="message1"
+        v-model="message"
         label="Enter text message here"
         clearable
         class="shrink"
       ></v-text-field>
-      <v-btn elevation="2">Send Message</v-btn>
+      <v-btn elevation="2" v-on:click="sendMessage">Send Message</v-btn>
     </div>
   </v-app>
 </template>
@@ -29,26 +31,32 @@ export default {
 
   data() {
     return {
-      phoneNumber: null,
-      payload: false,
+      message: "",
+      phoneNumber: "",
+      phoneNumberisValid: false,
+      showErrorInput: false,
     };
   },
   methods: {
-    update() {
-      console.log(this.payload.nationalNumber);
-      console.log(this.payload.isValid);
+    phoneInput(formattedNumber, { number, valid }) {
+      this.phoneNumber = number.e164;
+      console.log(this.phoneNumber);
+      this.phoneNumberisValid = valid;
     },
+
     async sendMessage() {
-      if (!this.payload.isValid) {
-        alert("nope");
+      if (!this.phoneNumberisValid || this.message == "") {
+        this.showErrorInput = true;
         return;
       }
+
+      console.log(this.phoneNumber);
+      console.log(this.message);
       try {
         var response = await api.post(
           "https://vlq8i3k6bf.execute-api.us-east-1.amazonaws.com/dev/sendSms",
-          { message: "brian", phone: "+17576791881" }
+          { message: this.message, phone: this.phoneNumber }
         );
-        console.log("response = " + JSON.stringify(response));
       } catch (e) {
         console.log("Error = " + e);
       }
